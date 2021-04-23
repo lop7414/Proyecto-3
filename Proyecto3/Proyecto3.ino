@@ -1,7 +1,9 @@
 //***************************************************************************************************************************************
 /* Librería para el uso de la pantalla ILI9341 en modo 8 bits
  * Basado en el código de martinayotte - https://www.stm32duino.com/viewtopic.php?t=637
- * IE3027: Electrónica Digital 2 - 2021
+ * Adaptación, migración y creación de nuevas funciones: Pablo Mazariegos y José Morales
+ * Con ayuda de: José Guerra
+ * IE3027: Electrónica Digital 2 - 2019
  */
 //***************************************************************************************************************************************
 #include <stdint.h>
@@ -57,11 +59,14 @@ void setup() {
   Serial.println("Inicio");
   LCD_Init();
   LCD_Clear(0x00);
-  
+
+//***************************************************************************************************************************************
+// Start Screen
+//***************************************************************************************************************************************
   FillRect(0, 0, 319, 206, 0x421b);
   String text1 = "Super Mario World!";
   LCD_Print(text1, 20, 100, 2, 0xffff, 0x421b);
-//LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
+  //LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
     
   //LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
   LCD_Bitmap(0, 0, 320, 240, fondo);
@@ -80,7 +85,7 @@ void setup() {
 // Loop Infinito
 //***************************************************************************************************************************************
 void loop() {
- /* for(int x = 0; x <320-32; x++){
+  for(int x = 0; x <320-32; x++){
     delay(15);
     int anim2 = (x/35)%2;
     
@@ -126,10 +131,9 @@ void loop() {
     //LCD_Sprite(x, 20, 16, 32, mario,8, anim,0, 0);
     //V_line( x + 16, 20, 32, 0x421b);
   } 
-*/
 }
 //***************************************************************************************************************************************
-// Función para inicializar LCD
+// inicializar LCD
 //***************************************************************************************************************************************
 void LCD_Init(void) {
   pinMode(LCD_RST, OUTPUT);
@@ -141,7 +145,7 @@ void LCD_Init(void) {
     pinMode(DPINS[i], OUTPUT);
   }
   //****************************************
-  // Secuencia de Inicialización
+  // Inicialización
   //****************************************
   digitalWrite(LCD_CS, HIGH);
   digitalWrite(LCD_RS, HIGH);
@@ -238,7 +242,7 @@ void LCD_Init(void) {
   digitalWrite(LCD_CS, HIGH);
 }
 //***************************************************************************************************************************************
-// Función para enviar comandos a la LCD - parámetro (comando)
+// Enviar comandos a la LCD
 //***************************************************************************************************************************************
 void LCD_CMD(uint8_t cmd) {
   digitalWrite(LCD_RS, LOW);
@@ -247,7 +251,7 @@ void LCD_CMD(uint8_t cmd) {
   digitalWrite(LCD_WR, HIGH);
 }
 //***************************************************************************************************************************************
-// Función para enviar datos a la LCD - parámetro (dato)
+// Enviar datos a la LCD - parámetro (dato)
 //***************************************************************************************************************************************
 void LCD_DATA(uint8_t data) {
   digitalWrite(LCD_RS, HIGH);
@@ -256,7 +260,7 @@ void LCD_DATA(uint8_t data) {
   digitalWrite(LCD_WR, HIGH);
 }
 //***************************************************************************************************************************************
-// Función para definir rango de direcciones de memoria con las cuales se trabajara (se define una ventana)
+// Definir ventana
 //***************************************************************************************************************************************
 void SetWindows(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
   LCD_CMD(0x2a); // Set_column_address 4 parameters
@@ -333,15 +337,6 @@ void Rect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsign
 //***************************************************************************************************************************************
 // Función para dibujar un rectángulo relleno - parámetros ( coordenada x, cordenada y, ancho, alto, color)
 //***************************************************************************************************************************************
-/*void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c) {
-  unsigned int i;
-  for (i = 0; i < h; i++) {
-    H_line(x  , y  , w, c);
-    H_line(x  , y+i, w, c);
-  }
-}
-*/
-
 void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c) {
   LCD_CMD(0x02c); // write_memory_start
   digitalWrite(LCD_RS, HIGH);
@@ -379,7 +374,7 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
     fontXSize = fontXSizeBig ;
     fontYSize = fontYSizeBig ;
   }
-  
+
   char charInput ;
   int cLength = text.length();
   Serial.println(cLength,DEC);
