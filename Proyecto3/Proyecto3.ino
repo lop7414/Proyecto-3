@@ -53,10 +53,13 @@ extern uint8_t fondo[];
 // Inicialización
 //***************************************************************************************************************************************
 void setup() {
-  pinMode (PA_2, INPUT);//Right
-  pinMode (PA_3, INPUT);//Left
-  pinMode (PA_6, INPUT);//Shoot
-  pinMode (PA_7, INPUT);//Reset
+  pinMode (PF_1, INPUT);//Right
+  pinMode (PA_5, INPUT);//Left
+  pinMode (PA_7, INPUT);//Shoot
+  pinMode (PA_6, INPUT);//Reset
+  pinMode (PE_3, INPUT);//Start
+
+  pinMode (PF_2, OUTPUT);//5V
   
   SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
   Serial.begin(9600);
@@ -69,29 +72,32 @@ void setup() {
 // Start Screen
 //***************************************************************************************************************************************
   FillRect(0, 0, 319, 239, 0x0000);
+  LCD_Bitmap(0, 0, 320, 240, fondo);
+  
   String text1 = "Defend from";
   LCD_Print(text1, 20, 100, 2, 0xffff, 0x0000);
   String text2 = "Invaders";
   LCD_Print(text2, 60, 150, 2, 0xffff, 0x0000);
+  
   //LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
 
   delay(1500);
-  FillRect(0, 0, 319, 239, 0x0000);
-  
-  LCD_Bitmap(0, 0, 320, 240, fondo);
+  FillRect(0, 0, 320, 240, 0x0000);
     
   //LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
   
   for(int x = 0; x <319; x++){
     LCD_Bitmap(x, 180, 16, 5, tile);
     x += 15;
- }
+  }
+  String text = "Press Start";
+  LCD_Print(text, 75, 10, 2, 0xffff, 0x0000);
   
 }
 //***************************************************************************************************************************************
 // Variables
 //***************************************************************************************************************************************
-int W = 0;
+int W = 1;
 int counter = 0;
 
 int V1 = 0;
@@ -120,14 +126,32 @@ int YB = 200;
 
 int score=0;
 int RESET;
+int START;
 //***************************************************************************************************************************************
 // Loop Infinito
 //***************************************************************************************************************************************
 void loop() {
+  digitalWrite(PF_2, HIGH); //5V
+  START = digitalRead(PE_3);
   
+  if (START==HIGH){
+    W=0;
+  }
   while(W==0){
     delay(15);
     counter++;
+
+    for(int x = 0; x <319; x++){
+    LCD_Bitmap(x, 180, 16, 5, tile);
+    x += 15;
+    }
+    
+    String text3 = String(score);
+    LCD_Print(text3, 0, 200, 2, 0xffff, 0x0000);
+  
+    String text5 = String(counter);
+    LCD_Print(text5, 250, 200, 2, 0xffff, 0x0000);
+    
 //***************************************************************************************************************************************
 // Alien 1
 //***************************************************************************************************************************************
@@ -223,9 +247,9 @@ void loop() {
 //***************************************************************************************************************************************
     
     LCD_Sprite(XJ, 200, 32, 32, SHIP,3,animJ,1, 0);
-    RIGHT = digitalRead(PA_2);
-    LEFT = digitalRead(PA_3);
-    SHOOT = digitalRead(PA_6);
+    RIGHT = digitalRead(PF_1);
+    LEFT = digitalRead(PA_5);
+    SHOOT = digitalRead(PA_7);
     
     if (RIGHT==HIGH){
       if (XJ<=320-32){
@@ -251,7 +275,7 @@ void loop() {
 //***************************************************************************************************************************************
     if (VB==1){
       YB=200;
-      XB=XJ;
+      XB=XJ+8;
       showB = 1;
       VB=0;
     }
@@ -261,28 +285,29 @@ void loop() {
       YB--;
 
       if (YB==0){
+        YB=200;
         showB=0;
       }
       
-      if (XB>=X1-16 && XB<=X1+16 && YB>=Y1 && YB<=Y1+16){
+      if ((XB>=X1-10 && XB<=X1+10) && (YB>=Y1 && YB<=Y1+16)){
         score=score+100;
-        FillRect(X1-1,Y1-1,18, 18, 0x0000);
+        FillRect(X1-1,Y1,16, 16, 0x0000);
         YB=200;
         X1 = 1;
         Y1 =0;
         showB=0;
       }
-      if (XB>=X2-16 && XB<=X2+16 && YB>=Y2 && YB<=Y2+16){
+      else if ((XB>=X2-10 && XB<=X2+10) && (YB>=Y2 && YB<=Y2+16)){
         score=score+100;
-        FillRect(X2-1,Y2-1,18, 18, 0x0000);
+        FillRect(X2-1,Y2,16, 16, 0x0000);
         YB=200;
         X2 = 1;
         Y2 =0;
         showB=0;
       }
-      if (XB>=X3-16 && XB<=X3+16 && YB>=Y3 && YB<=Y3+16){
+      else if ((XB>=X3-10 && XB<=X3+10) && (YB>=Y3 && YB<=Y3+16)){
         score=score+100;
-        FillRect(X3-1,Y3-1,18, 18, 0x0000);
+        FillRect(X3-1,Y3,16, 16, 0x0000);
         YB=200;
         X3 = 1;
         Y3 =0;
@@ -298,10 +323,14 @@ void loop() {
       FillRect(0, 0, 319, 239, 0x0000);
       String text1 = "Game Over";
       LCD_Print(text1, 20, 100, 2, 0xffff, 0x0000);
-      String text2 = String(score);
-      LCD_Print(text2, 60, 150, 2, 0xffff, 0x0000);
-      String text3 = String(counter);
-      LCD_Print(text3, 60, 200, 2, 0xffff, 0x0000);
+      String text2 = "Score: ";
+      LCD_Print(text2, 0, 150, 2, 0xffff, 0x0000);
+      String text3 = String(score);
+      LCD_Print(text3, 100, 150, 2, 0xffff, 0x0000);
+      String text4 = "Time: ";
+      LCD_Print(text4, 0, 200, 2, 0xffff, 0x0000);
+      String text5 = String(counter);
+      LCD_Print(text5, 100, 200, 2, 0xffff, 0x0000);
     }
 
   }
@@ -309,7 +338,7 @@ void loop() {
 //***************************************************************************************************************************************
 // Restart
 //***************************************************************************************************************************************
-  RESET = digitalRead(PA_7);
+  RESET = digitalRead(PA_6);
   
   if (RESET == HIGH){
     W = 0;
