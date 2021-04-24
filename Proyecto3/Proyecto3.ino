@@ -53,6 +53,11 @@ extern uint8_t fondo[];
 // Inicialización
 //***************************************************************************************************************************************
 void setup() {
+  pinMode (PA_2, INPUT);//Right
+  pinMode (PA_3, INPUT);//Left
+  pinMode (PA_6, INPUT);//Shoot
+  pinMode (PA_7, INPUT);//Reset
+  
   SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
   Serial.begin(9600);
   GPIOPadConfigSet(GPIO_PORTB_BASE, 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
@@ -72,6 +77,8 @@ void setup() {
 
   delay(1500);
   FillRect(0, 0, 319, 239, 0x0000);
+  
+  LCD_Bitmap(0, 0, 320, 240, fondo);
     
   //LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
   
@@ -100,10 +107,11 @@ int X3 = 100;
 int Y3 =0;
 int bounce3 = 0;
 
+int animJ = 0;
 int XJ = 144;
-int RIGHT = 0;
-int LEFT = 0;
-int SHOOT = 0;
+int RIGHT;
+int LEFT;
+int SHOOT;
 
 int VB = 0;
 int showB = 0;
@@ -111,7 +119,7 @@ int XB = 0;
 int YB = 200;
 
 int score=0;
-int RESET=0;
+int RESET;
 //***************************************************************************************************************************************
 // Loop Infinito
 //***************************************************************************************************************************************
@@ -124,25 +132,27 @@ void loop() {
 // Alien 1
 //***************************************************************************************************************************************
     if(V1==0){
+      int anim1 = (X1/35)%2;
+      
       if(counter >= 30){
         if(bounce1==0){
-          LCD_Sprite(X1,Y1,16,24,planta,2,1,0,1);
-          V_line( X1 -1, Y1, 24, 0x0000);
+          LCD_Sprite(X1,Y1,16,16,ALIEN,2,anim1,0,1);
+          V_line( X1 -1, Y1, 16, 0x0000);
           X1++; 
         }
         if (bounce1==1){
-          LCD_Sprite(X1,Y1,16,24,planta,2,1,0,1);
-          V_line( X1 +16, Y1, 24, 0x0000);
+          LCD_Sprite(X1,Y1,16,16,ALIEN,2,anim1,0,1);
+          V_line( X1 +16, Y1, 16, 0x0000);
           X1--;
         }
         if (X1==320-32){
           bounce1=1;
-          FillRect(X1-1, Y1, 16, 24, 0x0000);
+          FillRect(X1-1, Y1, 16, 16, 0x0000);
           Y1=Y1+20;
         }
         if (X1==0){
           bounce1=0;
-          FillRect(X1+1, Y1, 16, 24, 0x0000);
+          FillRect(X1+1, Y1, 16, 16, 0x0000);
           Y1=Y1+20;
         }
       }
@@ -152,25 +162,27 @@ void loop() {
 // Alien 2
 //***************************************************************************************************************************************
     if(V2==0){
+      int anim2 = (X2/35)%2;
+      
       if(counter >= 450){
         if(bounce2==0){
-          LCD_Sprite(X2,Y2,16,24,planta,2,1,0,1);
-          V_line( X2 -1, Y2, 24, 0x0000);
+          LCD_Sprite(X2,Y2,16,16,ALIEN,2,anim2,0,1);
+          V_line( X2 -1, Y2, 16, 0x0000);
           X2++; 
         }
         if (bounce2==1){
-          LCD_Sprite(X2,Y2,16,24,planta,2,1,0,1);
-          V_line( X2 +16, Y2, 24, 0x0000);
+          LCD_Sprite(X2,Y2,16,16,ALIEN,2,anim2,0,1);
+          V_line( X2 +16, Y2, 16, 0x0000);
           X2--;
         }
         if (X2==320-32){
           bounce2=1;
-          FillRect(X2-1, Y2, 16, 24, 0x0000);
+          FillRect(X2-1, Y2, 16, 16, 0x0000);
           Y2=Y2+20;
         }
         if (X2==0){
           bounce2=0;
-          FillRect(X2+1, Y2, 16, 24, 0x0000);
+          FillRect(X2+1, Y2, 16, 16, 0x0000);
           Y2=Y2+20;
         }
       }
@@ -180,25 +192,27 @@ void loop() {
 // Alien 3
 //***************************************************************************************************************************************
     if(V3==0){
+      int anim3 = (X3/35)%2;
+      
       if(counter >= 600){
         if(bounce3==0){
-          LCD_Sprite(X3,Y3,16,24,planta,2,1,0,1);
-          V_line( X3 -1, Y3, 24, 0x0000);
+          LCD_Sprite(X3,Y3,16,16,ALIEN,2,anim3,0,1);
+          V_line( X3 -1, Y3, 16, 0x0000);
           X3++; 
         }
         if (bounce3==1){
-          LCD_Sprite(X3,Y3,16,24,planta,2,1,0,1);
-          V_line( X3 +16, Y3, 24, 0x0000);
+          LCD_Sprite(X3,Y3,16,16,ALIEN,2,anim3,0,1);
+          V_line( X3 +16, Y3, 16, 0x0000);
           X3--;
         }
         if (X3==320-32){
           bounce3=1;
-          FillRect(X3-1, Y3, 16, 24, 0x0000);
+          FillRect(X3-1, Y3, 16, 16, 0x0000);
           Y3=Y3+20;
         }
         if (X3==0){
           bounce3=0;
-          FillRect(X3+1, Y3, 16, 24, 0x0000);
+          FillRect(X3+1, Y3, 16, 16, 0x0000);
           Y3=Y3+20;
         }
       }
@@ -207,23 +221,29 @@ void loop() {
 //***************************************************************************************************************************************
 // Jugador
 //***************************************************************************************************************************************
-    LCD_Sprite(XJ, 200, 16, 32, mario,8,0,1, 0);
     
-    if (RIGHT==1){
+    LCD_Sprite(XJ, 200, 32, 32, SHIP,3,animJ,1, 0);
+    RIGHT = digitalRead(PA_2);
+    LEFT = digitalRead(PA_3);
+    SHOOT = digitalRead(PA_6);
+    
+    if (RIGHT==HIGH){
       if (XJ<=320-32){
         V_line( XJ -1, 200, 32, 0x0000);
         XJ++;
+        animJ=2;
       }
     }
-    if (LEFT==1){
+    if (LEFT==HIGH){
       if (XJ>=0){
         V_line( XJ + 16, 200, 32, 0x0000);
         XJ--;
+        animJ=1;
       }
     }
-    if (SHOOT==1){
+    if (SHOOT==HIGH){
       VB=1;
-      SHOOT=0;
+      animJ=0;
     }
 
 //***************************************************************************************************************************************
@@ -236,7 +256,7 @@ void loop() {
       VB=0;
     }
     if (showB==1){
-      LCD_Sprite(XB, YB, 16, 16, enemy,2, 0,1, 0);
+      LCD_Sprite(XB, YB, 16, 16, BULLET,1,0,1, 0);
       H_line( XB,YB +16,16,0x0000);
       YB--;
 
@@ -244,25 +264,25 @@ void loop() {
         showB=0;
       }
       
-      if (XB>=X1-16 && XB<=X1+16 && YB>=Y1 && YB<=Y1+24){
+      if (XB>=X1-16 && XB<=X1+16 && YB>=Y1 && YB<=Y1+16){
         score=score+100;
-        FillRect(X1-1,Y1-1,18, 26, 0x0000);
+        FillRect(X1-1,Y1-1,18, 18, 0x0000);
         YB=200;
         X1 = 1;
         Y1 =0;
         showB=0;
       }
-      if (XB>=X2-16 && XB<=X2+16 && YB>=Y2 && YB<=Y2+24){
+      if (XB>=X2-16 && XB<=X2+16 && YB>=Y2 && YB<=Y2+16){
         score=score+100;
-        FillRect(X2-1,Y2-1,18, 26, 0x0000);
+        FillRect(X2-1,Y2-1,18, 18, 0x0000);
         YB=200;
         X2 = 1;
         Y2 =0;
         showB=0;
       }
-      if (XB>=X3-16 && XB<=X3+16 && YB>=Y3 && YB<=Y3+24){
+      if (XB>=X3-16 && XB<=X3+16 && YB>=Y3 && YB<=Y3+16){
         score=score+100;
-        FillRect(X3-1,Y3-1,18, 26, 0x0000);
+        FillRect(X3-1,Y3-1,18, 18, 0x0000);
         YB=200;
         X3 = 1;
         Y3 =0;
@@ -273,13 +293,15 @@ void loop() {
 // Game Over
 //***************************************************************************************************************************************
 
-    if (Y1 > 180-24 || Y2 > 180-24 || Y3 > 180-24){
+    if (Y1 > 180-16 || Y2 > 180-16 || Y3 > 180-16){
       W=1;
       FillRect(0, 0, 319, 239, 0x0000);
       String text1 = "Game Over";
       LCD_Print(text1, 20, 100, 2, 0xffff, 0x0000);
       String text2 = String(score);
       LCD_Print(text2, 60, 150, 2, 0xffff, 0x0000);
+      String text3 = String(counter);
+      LCD_Print(text3, 60, 200, 2, 0xffff, 0x0000);
     }
 
   }
@@ -287,10 +309,12 @@ void loop() {
 //***************************************************************************************************************************************
 // Restart
 //***************************************************************************************************************************************
-
-  if (RESET == 1){
+  RESET = digitalRead(PA_7);
+  
+  if (RESET == HIGH){
     W = 0;
     counter = 0;
+
     V1 = 0;
     X1 = 1;
     Y1 =0;
@@ -303,58 +327,16 @@ void loop() {
     X3 = 100;
     Y3 =0;
     bounce3 = 0;
+
+    XJ = 144;
+
+    VB = 0;
+    showB = 0;
+    XB = 0;
+    YB = 200;
+
+    score=0;
   }
-
-  
-  
-  
-  /*
-  for(int x = 0; x <320-32; x++){
-    delay(15);
-    int anim2 = (x/35)%2;
-    //LCD_Sprite(cordenada x,cordenada y, ancho, altura, sprite, numero de animaciones, animacion, flip,off)
-    LCD_Sprite(x,100,16,24,planta,2,anim2,0,1);
-    V_line( x -1, 100, 24, 0x0000);
-    
-    //LCD_Bitmap(x, 100, 32, 32, prueba);
-    
-    int anim = (x/11)%8;
-    
-
-    int anim3 = (x/11)%4;
-    
-    LCD_Sprite(x, 20, 16, 32, mario,8, anim,1, 0);
-    V_line( x -1, 20, 32, 0x0000);
- 
-    //LCD_Sprite(x,100,32,32,bowser,4,anim3,0,1);
-    //V_line( x -1, 100, 32, 0x421b);
- 
- 
-    LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,1, 0);
-    V_line( x -1, 140, 16, 0x0000);
-  
-    LCD_Sprite(x, 175, 16, 32, luigi,8, anim,1, 0);
-    V_line( x -1, 175, 32, 0x0000);
-  }
-  for(int x = 320-32; x >0; x--){
-    delay(5);
-    int anim = (x/11)%8;
-    int anim2 = (x/11)%2;
-    
-    LCD_Sprite(x,100,16,24,planta,2,anim2,0,0);
-    V_line( x + 16, 100, 24, 0x0000);
-    
-    //LCD_Bitmap(x, 100, 32, 32, prueba);
-    
-    //LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,0, 0);
-    //V_line( x + 16, 140, 16, 0x421b);
-    
-    //LCD_Sprite(x, 175, 16, 32, luigi,8, anim,0, 0);
-    //V_line( x + 16, 175, 32, 0x421b);
-
-    //LCD_Sprite(x, 20, 16, 32, mario,8, anim,0, 0);
-    //V_line( x + 16, 20, 32, 0x421b);
-  } */
 }
 //***************************************************************************************************************************************
 // inicializar LCD
