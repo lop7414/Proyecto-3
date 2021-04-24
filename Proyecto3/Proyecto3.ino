@@ -138,7 +138,7 @@ void loop() {
     W=0;
   }
   while(W==0){
-    delay(15);
+    delay(5);
     counter++;
 
     for(int x = 0; x <319; x++){
