@@ -1,3 +1,4 @@
+
 //***************************************************************************************************************************************
 /* Librería para el uso de la pantalla ILI9341 en modo 8 bits
  * Basado en el código de martinayotte - https://www.stm32duino.com/viewtopic.php?t=637
@@ -292,6 +293,7 @@ void loop() {
       if ((XB>=X1-10 && XB<=X1+10) && (YB>=Y1 && YB<=Y1+16)){
         score=score+100;
         FillRect(X1-1,Y1,16, 16, 0x0000);
+        //FillRect(XB, YB, 16, 16, 0x0000);  Cuadro para cobrir la bala no funciona
         YB=200;
         X1 = 1;
         Y1 =0;
@@ -365,6 +367,7 @@ void loop() {
     YB = 200;
 
     score=0;
+    FillRect(0, 0, 319, 239, 0x0000);
   }
 }
 //***************************************************************************************************************************************
